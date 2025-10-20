@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://ep-summer-flower-a4sqs385-pooler.us-east-1.aws.neon.tech/verceldb?user=default&password=VuBszwQy7q5G&sslmode=require&channelBinding=require
+    username: default
+    password: VuBszwQy7q5G
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8080
