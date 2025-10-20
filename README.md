@@ -1,56 +1,62 @@
-# HomeSweetHome-backend
+# 🏠 HomeSweetHome-backend
 
-Es una aplicación backend inspirada en Airbnb, desarrollada con Spring Boot (Java 17) y PostgreSQL (Neon Cloud).
-Su objetivo es gestionar usuarios, alojamientos, reservas, pagos y reseñas de forma escalable, segura y moderna.
+Aplicación backend inspirada en Airbnb, desarrollada con **Spring Boot (Java 17)** y **PostgreSQL (Neon Cloud)**.  
+Gestiona usuarios, alojamientos, reservas, pagos y reseñas de forma escalable, segura y moderna.
 
-🚀 Tecnologías principales
-Tecnología	Descripción
-Java 17	Lenguaje principal del proyecto
-Spring Boot 3	Framework backend
-Spring Data JPA	ORM para la persistencia de datos
-PostgreSQL (Neon)	Base de datos en la nube
-pgAdmin 4	Herramienta de administración de la base
-Maven	Gestor de dependencias y build tool
-Lombok	Generación automática de getters, setters y builders
-🧩 Arquitectura del proyecto
+---
+
+## 🚀 Tecnologías principales
+
+| Tecnología        | Descripción                                           |
+|------------------|-------------------------------------------------------|
+| Java 17          | Lenguaje principal del proyecto                       |
+| Spring Boot 3    | Framework backend                                     |
+| Spring Data JPA  | ORM para la persistencia de datos                     |
+| PostgreSQL (Neon)| Base de datos en la nube                              |
+| pgAdmin 4        | Herramienta de administración de base de datos       |
+| Maven            | Gestor de dependencias y build tool                   |
+| Lombok           | Generación automática de getters, setters y builders  |
+
+---
+
+## 🧩 Arquitectura del proyecto
+
 openLodge/
 ├── src/
-│   ├── main/
-│   │   ├── java/com/openlodge/
-│   │   │   ├── entities/         # Entidades JPA
-│   │   │   ├── repositories/     # Repositorios (interfaces JPA)
-│   │   │   ├── services/         # Lógica de negocio
-│   │   │   ├── controllers/      # Endpoints REST
-│   │   │   └── OpenLodgeApplication.java
-│   │   └── resources/
-│   │       ├── application.yml   # Configuración principal
-│   │       └── static / templates (si aplica)
-│   └── test/                     # Tests automáticos
-└── pom.xml                       # Dependencias y build
+│ ├── main/
+│ │ ├── java/com/openlodge/
+│ │ │ ├── entities/ # Entidades JPA
+│ │ │ ├── repositories/ # Repositorios (interfaces JPA)
+│ │ │ ├── services/ # Lógica de negocio
+│ │ │ ├── controllers/ # Endpoints REST
+│ │ │ └── OpenLodgeApplication.java
+│ │ └── resources/
+│ │ ├── application.yml # Configuración principal
+│ │ └── static / templates (si aplica)
+│ └── test/ # Tests automáticos
+└── pom.xml # Dependencias y build
 
-⚙️ Configuración inicial
-1️⃣ Requisitos previos
+---
 
-Asegurate de tener instalado:
+## ⚙️ Configuración inicial
 
-Java 17+
+### 1️⃣ Requisitos previos
 
-Maven 3.8+
+Asegúrate de tener instalado:
 
-pgAdmin 4
+- Java 17+
+- Maven 3.8+
+- pgAdmin 4
+- Una cuenta en [Neon.tech](https://neon.tech)
 
-Una cuenta en Neon.tech
- (para PostgreSQL en la nube)
+---
 
-2️⃣ Clonar el repositorio
+### 2️⃣ Clonar el repositorio
+
 git clone https://github.com/tuusuario/openlodge-backend.git
 cd openlodge-backend
-
 3️⃣ Configurar la base de datos (Neon)
-
-Crea una base en Neon.tech
- y anota tus credenciales.
-Luego, configuralas en src/main/resources/application.yml:
+Crea una base en Neon.tech y anota tus credenciales. Luego, configúralas en src/main/resources/application.yml:
 
 spring:
   datasource:
@@ -69,31 +75,26 @@ spring:
 
 server:
   port: 8080
-
-
-💡 Al ejecutar el proyecto, Hibernate creará automáticamente todas las tablas en la base Neon.
+💡 Hibernate creará automáticamente las tablas al ejecutar la aplicación.
 
 4️⃣ Compilar y ejecutar
+
 mvn clean install
 mvn spring-boot:run
-
-
-Luego, abrí tu navegador y accedé a:
-
-👉 http://localhost:8080
+Luego accede a: 👉 http://localhost:8080
 
 🧠 Entidades principales
 Entidad	Descripción
 User	Usuarios del sistema (huéspedes y anfitriones)
-Accommodation	Alojamiento publicado (casa, depto, habitación)
-Reservation	Reservas realizadas por los huéspedes
+Accommodation	Alojamientos publicados
+Reservation	Reservas realizadas por huéspedes
 Review	Reseñas y calificaciones de los alojamientos
 Location	Dirección y coordenadas de cada alojamiento
 Image	Imágenes asociadas a los alojamientos
 Payment	Pagos vinculados a las reservas
 Amenity	Servicios y comodidades disponibles
-🧩 Relaciones entre entidades
 
+🔗 Relaciones entre entidades
 User (host) ↔️ Accommodation → 1:N
 
 User (guest) ↔️ Reservation → 1:N
@@ -109,10 +110,12 @@ Reservation ↔️ Payment → 1:1
 Accommodation ↔️ Location → 1:1
 
 📦 Scripts útiles en pgAdmin
-Ver todas las tablas
-SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';
 
+Ver todas las tablas
+
+SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';
 Vaciar todas las tablas (borrar esquema)
+
 DO $$ DECLARE
     r RECORD;
 BEGIN
@@ -122,13 +125,16 @@ BEGIN
 END $$;
 
 🧪 Prueba de conexión rápida
-
-Podés agregar este componente para confirmar la conexión a Neon al iniciar la app:
+Agrega este componente para confirmar la conexión a Neon al iniciar la app:
 
 @Component
 public class DatabaseChecker implements CommandLineRunner {
     private final JdbcTemplate jdbcTemplate;
-    public DatabaseChecker(JdbcTemplate jdbcTemplate) { this.jdbcTemplate = jdbcTemplate; }
+
+    public DatabaseChecker(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     @Override
     public void run(String... args) {
         String dbName = jdbcTemplate.queryForObject("SELECT current_database()", String.class);
@@ -136,8 +142,8 @@ public class DatabaseChecker implements CommandLineRunner {
         System.out.println("✅ Connected to database: " + dbName + " as user: " + user);
     }
 }
-
 🧰 Dependencias principales (pom.xml)
+
 <dependencies>
     <dependency>
         <groupId>org.springframework.boot</groupId>
@@ -164,27 +170,7 @@ public class DatabaseChecker implements CommandLineRunner {
     </dependency>
 </dependencies>
 
-👥 Equipo y desarrollo
-Rol	Nombre	Tareas principales
-💻 Backend Developer	Tu nombre	Modelado de entidades, endpoints REST, integración con PostgreSQL
-🎨 Frontend Developer	—	(Próxima etapa)
-🧠 QA / Tester	—	(Pendiente de asignación)
-📈 Próximos pasos
-
- Implementar Repositories (JPA interfaces)
-
- Crear capa de servicios (@Service)
-
- Exponer endpoints REST (@RestController)
-
- Añadir autenticación JWT
-
- Integrar con el frontend (React / Next.js)
-
- Desplegar en entorno de prueba (Railway / Render / Fly.io)
 
 🧾 Licencia
-
 Este proyecto es de uso académico y educativo.
 Desarrollado por OpenLodge Team © 2025.
-
