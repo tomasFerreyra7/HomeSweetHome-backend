@@ -32,3 +32,11 @@ build/
 ### VS Code ###
 .vscode/
 .cursor/
+
+# Archivos de entorno y configuraciones locales
+.env
+*.env
+*.properties
+*.yml
+!application.yml
+

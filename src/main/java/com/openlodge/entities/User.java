@@ -1,4 +1,4 @@
-package com.openlodge.entity;
+package com.openlodge.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -8,7 +8,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+
 import java.time.Instant;
+import java.time.LocalDate;
+
+import org.springframework.cglib.core.Local;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
@@ -37,8 +44,9 @@ public class User {
     private String email;
 
     @NotBlank(message = "Password is required")
-    @Column(name = "password_hash", nullable = false)
-    private String passwordHash;
+    @Column(nullable = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String password;
 
     @Size(max = 20, message = "Phone number must not exceed 20 characters")
     private String phone;
@@ -72,7 +80,7 @@ public class User {
     private String bio;
 
     @Column(name = "date_of_birth")
-    private Instant dateOfBirth;
+    private LocalDate dateOfBirth;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @Builder.Default

@@ -1,4 +1,4 @@
-package com.openlodge.entity;
+package com.openlodge.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;

@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://ep-summer-flower-a4sqs385-pooler.us-east-1.aws.neon.tech/verceldb?user=default&password=VuBszwQy7q5G&sslmode=require&channelBinding=require
-    username: default
-    password: VuBszwQy7q5G
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
