@@ -40,4 +40,9 @@ public class Reservation {
 
     @OneToOne(mappedBy = "reservation", cascade = CascadeType.ALL)
     private Payment payment;
+
+    @AssertTrue(message = "La fecha de check-out debe ser posterior a la de check-in")
+    public boolean isCheckOutAfterCheckIn() {
+        return checkOut != null && checkIn != null && checkOut.isAfter(checkIn);
+    }
 }
