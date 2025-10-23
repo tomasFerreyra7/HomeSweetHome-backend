@@ -1,5 +1,7 @@
 package com.openlodge.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.openlodge.util.ValidDateRange;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -12,6 +14,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ValidDateRange
 public class Reservation {
 
     @Id
@@ -23,7 +26,7 @@ public class Reservation {
     private LocalDate checkIn;
 
     @NotNull(message = "La fecha de check-out no puede ser nula")
-    @Future(message = "La fecha de check-out debe ser una fecha futura")
+    @FutureOrPresent(message = "La fecha de check-out debe ser hoy o una fecha futura")
     private LocalDate checkOut;
 
     @NotNull(message = "El precio total no puede ser nulo")
@@ -38,6 +41,8 @@ public class Reservation {
     @JoinColumn(name = "accomodation_id")
     private Accomodation accomodation;
 
-    @OneToOne(mappedBy = "reservation", cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "payment_id")
+    @JsonManagedReference
     private Payment payment;
-}
+}   

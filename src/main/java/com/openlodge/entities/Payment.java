@@ -1,5 +1,7 @@
 package com.openlodge.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -31,7 +33,7 @@ public class Payment {
     )
     private String status; // pending, completed, refunded, etc.
 
-    @OneToOne
-    @JoinColumn(name = "reservation_id")
+    @OneToOne(mappedBy = "payment")
+    @JsonBackReference
     private Reservation reservation;
 }
