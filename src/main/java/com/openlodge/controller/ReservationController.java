@@ -92,14 +92,14 @@ public class ReservationController {
     }
 
     @PatchMapping("/{id}/cancel")
-public ResponseEntity<Reservation> markAsCancelled(@PathVariable Long id) {
-    Optional<Reservation> r = reservationService.getReservationById(id);
-    if (r.isPresent()) {
-        Reservation res = r.get();
-        res.setCancelled(true);
-        reservationService.save(res);
-        return ResponseEntity.ok(res);
+    public ResponseEntity<Reservation> markAsCancelled(@PathVariable Long id) {
+        Optional<Reservation> r = reservationService.getReservationById(id);
+        if (r.isPresent()) {
+            Reservation res = r.get();
+            res.setCancelled(true);
+            reservationService.save(res);
+            return ResponseEntity.ok(res);
+        }
+        return ResponseEntity.notFound().build();
     }
-    return ResponseEntity.notFound().build();
-}
 }
