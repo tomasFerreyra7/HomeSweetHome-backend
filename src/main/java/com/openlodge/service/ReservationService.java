@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -30,7 +31,7 @@ public class ReservationService {
     @Autowired
     private AccomodationRepository accomodationRepository;
 
-    @Autowired
+    @Autowired  
     private PaymentRepository paymentRepository;
 
     // Crear una nueva reserva
@@ -55,7 +56,7 @@ public class ReservationService {
 
     // Obtener todas las reservas
     public List<Reservation> findAll() {
-        return reservationRepository.findAll();
+        return reservationRepository.findByDeletedAtIsNull();
     }
 
     // Obtener una reserva por ID
@@ -68,6 +69,10 @@ public class ReservationService {
     public Reservation update(Long id, ReservationDTO dto) {
         // Buscar la reserva por ID
         Reservation reservation = findById(id);
+
+        if (reservation.getDeletedAt() != null) {
+            throw new RuntimeException("No se puede actualizar una reserva eliminada");
+        }
         
         // Actualizar solo si el campo no es nulo
         if (dto.getCheckIn() != null) {
@@ -108,5 +113,26 @@ public class ReservationService {
     public void delete(Long id) {
         Reservation reservation = findById(id);
         reservationRepository.delete(reservation);
+    }
+
+    // Soft delete
+    @Transactional
+    public void softDelete(Long id) {
+        Reservation reservation = findById(id);
+
+        reservation.setDeletedAt(LocalDate.now());
+        reservationRepository.save(reservation);
+    }
+
+    @Transactional
+    public void restore(Long id) {
+        Reservation reservation = findById(id);
+
+        if (reservation.getDeletedAt() != null) {
+            reservation.setDeletedAt(null);
+            reservationRepository.save(reservation);
+        } else {
+            throw new RuntimeException("La reserva no esta eliminada");
+        }
     }
 }

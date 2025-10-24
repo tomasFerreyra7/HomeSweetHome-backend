@@ -45,4 +45,7 @@ public class Reservation {
     @JoinColumn(name = "payment_id")
     @JsonManagedReference
     private Payment payment;
+
+    @Column(name = "deleted_at")
+    private LocalDate deletedAt;
 }   

@@ -55,6 +55,20 @@ public class ReservationController {
         return ResponseEntity.ok(reservation);
     }
 
+    // Eliminar una reserva(soft-delete)
+    @PatchMapping("/{id}/delete")
+    public ResponseEntity<Void> softDelete(@PathVariable Long id) {
+        reservationService.softDelete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // Restaurar una reserva (soft-delete == null)
+    @PatchMapping("/{id}/restore")
+    public ResponseEntity<Void> restore(@PathVariable Long id) {
+        reservationService.restore(id);
+        return ResponseEntity.noContent().build();
+    }
+
     // Eliminar una reserva
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
