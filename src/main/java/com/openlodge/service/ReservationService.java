@@ -55,10 +55,24 @@ public class ReservationService {
         return reservationRepository.findByGuest(guest);
     }
 
-    //busca accomodation instanciado en ReservationRepo
+    // busca accomodation instanciado en ReservationRepo
     public List<Reservation> getAccomodationbyReservations(Accomodation accomodation) {
         return reservationRepository.findByAccomodation(accomodation);
     }
 
-    
+    // Modifica las reservas
+    public boolean deleteReservation(Long id) {
+        if (reservationRepository.existsById(id)) {
+            reservationRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+
+    // metodo creado automaticamente para la modificacion y cancelacion
+    public void save(Reservation res) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'save'");
+    }
+
 }

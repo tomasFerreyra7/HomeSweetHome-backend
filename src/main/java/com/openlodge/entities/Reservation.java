@@ -45,4 +45,11 @@ public class Reservation {
     public boolean isCheckOutAfterCheckIn() {
         return checkOut != null && checkIn != null && checkOut.isAfter(checkIn);
     }
+
+    // metodo creado para la cancelacion
+    public void setCancelled(boolean b) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setCancelled'");
+    }
+
 }
