@@ -2,6 +2,7 @@ package com.openlodge.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -41,9 +42,12 @@ public class SecurityConfig {
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // **CLAVE:** Sesiones sin estado (JWT)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        // Permitir acceso a la ruta de registro y login (y rutas públicas)
+                        // Permitir acceso a la ruta de login
                         .requestMatchers("/api/auth/**").permitAll()
                         
+                        // Permitir acceso a la ruta register
+                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+
                         // Rutas publicas
                         .requestMatchers("/api/accomodations", "/api/amenities").permitAll()
                         
@@ -59,6 +63,6 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Ya usas BCrypt en UserService
+        return new BCryptPasswordEncoder(); 
     }
 }
