@@ -48,6 +48,9 @@ public class SecurityConfig {
                         // Permitir acceso a la ruta register
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
 
+                        // Permitir acceso a la ruta de alojamientos por id
+                        .requestMatchers(HttpMethod.GET, "/api/accomodations/**").permitAll()
+
                         // Rutas publicas
                         .requestMatchers("/api/accomodations", "/api/amenities").permitAll()
                         
