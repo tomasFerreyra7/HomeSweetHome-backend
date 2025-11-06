@@ -1,5 +1,6 @@
 package com.openlodge.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -23,5 +24,6 @@ public class Image {
 
     @ManyToOne
     @JoinColumn(name = "accomodation_id")
+    @JsonBackReference
     private Accomodation accomodation;
 }

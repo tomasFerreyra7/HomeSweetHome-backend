@@ -1,5 +1,6 @@
 package com.openlodge.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -37,5 +38,6 @@ public class Review {
 
     @ManyToOne
     @JoinColumn(name = "accomodation_id")
+    @JsonBackReference
     private Accomodation accomodation;
 }

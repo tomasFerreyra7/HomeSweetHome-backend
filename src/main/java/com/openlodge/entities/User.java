@@ -4,10 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+// Temporary: removed Lombok until we fix annotation processing
 
 
 import java.time.Instant;
@@ -19,10 +16,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class User {
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,7 +46,6 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @Builder.Default
     private Role role = Role.GUEST;
 
     @Size(max = 100, message = "Country name must not exceed 100 characters")
@@ -66,11 +58,9 @@ public class User {
     private String city;
 
     @Column(name = "is_verified", nullable = false)
-    @Builder.Default
     private Boolean isVerified = false;
 
     @Column(name = "is_active", nullable = false)
-    @Builder.Default
     private Boolean isActive = true;
 
     @Column(name = "profile_picture_url")
@@ -83,12 +73,71 @@ public class User {
     private LocalDate dateOfBirth;
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    @Builder.Default
     private Instant createdAt = Instant.now();
 
     @Column(name = "updated_at")
-    @Builder.Default
     private Instant updatedAt = Instant.now();
+
+    // Constructors
+    public User() {
+        this.role = Role.GUEST;
+        this.isVerified = false;
+        this.isActive = true;
+        this.createdAt = Instant.now();
+        this.updatedAt = Instant.now();
+    }
+
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getFirstName() { return firstName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+
+    public String getLastName() { return lastName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
+
+    public String getCountry() { return country; }
+    public void setCountry(String country) { this.country = country; }
+
+    public String getProvince() { return province; }
+    public void setProvince(String province) { this.province = province; }
+
+    public String getCity() { return city; }
+    public void setCity(String city) { this.city = city; }
+
+    public Boolean getIsVerified() { return isVerified; }
+    public void setIsVerified(Boolean isVerified) { this.isVerified = isVerified; }
+
+    public Boolean getIsActive() { return isActive; }
+    public void setIsActive(Boolean isActive) { this.isActive = isActive; }
+
+    public String getProfilePictureUrl() { return profilePictureUrl; }
+    public void setProfilePictureUrl(String profilePictureUrl) { this.profilePictureUrl = profilePictureUrl; }
+
+    public String getBio() { return bio; }
+    public void setBio(String bio) { this.bio = bio; }
+
+    public LocalDate getDateOfBirth() { return dateOfBirth; }
+    public void setDateOfBirth(LocalDate dateOfBirth) { this.dateOfBirth = dateOfBirth; }
+
+    public Instant getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+
+    public Instant getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
 
     // Utility methods
     public String getFullName() {
