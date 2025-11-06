@@ -1,11 +1,10 @@
 package com.openlodge.repository;
 
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import com.openlodge.entities.User;
+
+import com.openlodge.entities.Amenity;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-    User findByEmail(String email);
+public interface AmenityRepository extends JpaRepository<Amenity, Long> {
 }
