@@ -34,36 +34,23 @@ public class SecurityConfig {
         return new JwtAuthenticationFilter();
     }
     
-    @Bean
+   @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource)) // Habilita CORS explícitamente
-                .csrf(AbstractHttpConfigurer::disable) // Desactiva CSRF (para APIs REST)
-                .sessionManagement(session -> session
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // **CLAVE:** Sesiones sin estado (JWT)
-                )
-                .authorizeHttpRequests(auth -> auth
-                        // Permitir acceso a la ruta de login
-                        .requestMatchers("/api/auth/**").permitAll()
-                        
-                        // Permitir acceso a la ruta register
-                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+    http
+        .cors(cors -> cors.configurationSource(corsConfigurationSource))
+        .csrf(AbstractHttpConfigurer::disable)
+        .sessionManagement(session -> session
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        )
+        .authorizeHttpRequests(auth -> auth
+            .anyRequest().permitAll() // ✅ Permite TODO temporalmente
+        );
 
-                        // Permitir acceso a la ruta de alojamientos por id
-                        .requestMatchers(HttpMethod.GET, "/api/accomodations/**").permitAll()
+    http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
-                        // Rutas publicas
-                        .requestMatchers("/api/accomodations", "/api/amenities").permitAll()
-                        
-                        // Proteger las demás rutas (requieren JWT)
-                        .anyRequest().authenticated()
-                );
-        
-        // **FALTA:** Añadir el filtro de JWT para validar el token en cada petición (JwtAuthenticationFilter)
-        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-        
-        return http.build();
+    return http.build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

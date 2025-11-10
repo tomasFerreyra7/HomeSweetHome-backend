@@ -46,8 +46,11 @@ public class UserController {
 
     @PostMapping
     public User createUser(@RequestBody User user) {
-        return userService.createUser(user);
-    }
+    System.out.println("📩 Recibido: " + user.getEmail() + " " + user.getFirstName());
+    return userService.createUser(user);
+}
+
+
 
     @PatchMapping("/{id}")
     public ResponseEntity<User> partialUpdateUser(@PathVariable Long id, @RequestBody User partialUser) {

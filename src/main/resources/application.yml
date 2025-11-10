@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
+    url: jdbc:postgresql://ep-summer-flower-a4sqs385-pooler.us-east-1.aws.neon.tech/verceldb?sslmode=require&channelBinding=require
+    username: default
+    password: VuBszwQy7q5G
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -13,6 +13,9 @@ spring:
       hibernate:
         format_sql: true
 
-
 server:
   port: 8080
+
+jwt:
+  secret: hola123
+  expiration: 36000
