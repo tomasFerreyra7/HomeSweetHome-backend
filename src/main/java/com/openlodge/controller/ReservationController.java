@@ -18,7 +18,7 @@ public class ReservationController {
 
     // Crear una nueva reserva
     @PostMapping
-    public ResponseEntity<Reservation> create(@RequestBody ReservationDTO reservationDTO) {
+    public ResponseEntity<Reservation> create(@RequestBody @jakarta.validation.Valid ReservationDTO reservationDTO) {
         Reservation reservation = reservationService.create(reservationDTO);
         return ResponseEntity.ok(reservation);
     }
@@ -44,13 +44,13 @@ public class ReservationController {
         if (id == null) {
             return ResponseEntity.badRequest().body(null); // Error si el ID no es válido
         }
-    
+
         // Log de depuración
         System.out.println("ID recibido: " + id);
-    
+
         // Llamada al servicio para actualizar la reserva
         Reservation reservation = reservationService.update(id, reservationDTO);
-    
+
         // Respuesta con la reserva actualizada
         return ResponseEntity.ok(reservation);
     }
