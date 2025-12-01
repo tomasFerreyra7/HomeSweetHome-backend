@@ -3,7 +3,6 @@ package com.openlodge.entities;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Entity
@@ -19,7 +18,7 @@ public class Image {
     private Long id;
 
     @NotNull(message = "La URL de la imagen no puede ser nula")
-    @Size(min = 5, max = 500, message = "La URL debe tener entre 5 y 500 caracteres")
+    @Column(columnDefinition = "TEXT")
     private String url;
 
     @ManyToOne

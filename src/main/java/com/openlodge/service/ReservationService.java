@@ -13,6 +13,7 @@ import com.openlodge.repository.PaymentRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -185,5 +186,10 @@ public class ReservationService {
         } else {
             throw new RuntimeException("La reserva no esta eliminada");
         }
+    }
+
+    // Find reservation by host
+    public List<Reservation> findByHostId(Long hostId) {
+        return reservationRepository.findByHostId(hostId);
     }
 }

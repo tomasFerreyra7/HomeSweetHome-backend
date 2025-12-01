@@ -35,4 +35,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("checkIn") LocalDate checkIn, 
             @Param("checkOut") LocalDate checkOut,
             @Param("excludeId") Long excludeId);
+
+    @Query("SELECT r FROM Reservation r WHERE r.accomodation.host.id = :hostId AND r.deletedAt IS NULL")
+    List<Reservation> findByHostId(@Param("hostId") Long hostId);
+
+    List<Reservation> findByAccomodationId(long accomodationId);
 }

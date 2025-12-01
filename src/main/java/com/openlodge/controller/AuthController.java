@@ -45,14 +45,18 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = tokenProvider.generateToken(authentication);
 
-        // 3. Obtener detalles del usuario para la respuesta
+        // 3. Obtener Usuario
         User user = userRepository.findByEmail(loginRequest.getEmail());
-
-        return ResponseEntity.ok(new AuthResponse(
+                
+        // 4. Crear respuesta con el constructor nuevo
+        AuthResponse response = new AuthResponse(
             jwt,
-            "Bearer",
             user.getId(),
-            user.getEmail()
-        ));
+            user.getEmail(),
+            user.getFirstName(),    // Ahora sí enviamos el nombre
+            user.getRole().name()   // Enviamos el rol como String (ADMIN, HOST, etc)
+        );
+
+        return ResponseEntity.ok(response);
     }
 }
