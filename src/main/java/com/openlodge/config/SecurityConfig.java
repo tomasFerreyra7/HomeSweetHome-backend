@@ -53,7 +53,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/accomodations/**").permitAll()
 
                         // Esto es vital para que cargue el calendario en reservar.html sin estar logueado
-                        .requestMatchers(HttpMethod.GET, "/api/reservations/accommodation/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/reservations/accomodations/**").permitAll()
                         
                         // Proteger las demás rutas (requieren JWT)
                         .anyRequest().authenticated()

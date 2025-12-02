@@ -45,7 +45,7 @@ public class ReservationController {
     }
 
     // Reservas por accomodationId
-    @GetMapping("/accomodation/{id}")
+    @GetMapping("/accomodations/{id}")
     public ResponseEntity<List<Reservation>> getReservationsByAccomodation(@PathVariable Long id) {
         return ResponseEntity.ok(reservationService.findByAccomodationId(id));
     }
