@@ -44,6 +44,12 @@ public class ReservationController {
         return ResponseEntity.ok(reservations);
     }
 
+    // Reservas por accomodationId
+    @GetMapping("/accomodation/{id}")
+    public ResponseEntity<List<Reservation>> getReservationsByAccomodation(@PathVariable Long id) {
+        return ResponseEntity.ok(reservationService.findByAccomodationId(id));
+    }
+
     // Actualizar una reserva
     @PatchMapping("/{id}")
     public ResponseEntity<Reservation> update(@PathVariable Long id, @RequestBody ReservationDTO reservationDTO) {

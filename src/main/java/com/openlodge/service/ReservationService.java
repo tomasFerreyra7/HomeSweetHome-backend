@@ -13,7 +13,6 @@ import com.openlodge.repository.PaymentRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,6 +57,10 @@ public class ReservationService {
 
         Accomodation accomodation = accomodationRepository.findById(dto.getAccomodationId())
                 .orElseThrow(() -> new EntityNotFoundException("Accomodation no encontrado"));
+
+        if (accomodation.getHost().getId().equals(guest.getId())) {
+            throw new IllegalArgumentException("No puedes reservar tu propio alojamiento.");
+        }
 
         Reservation reservation = Reservation.builder()
                 .checkIn(dto.getCheckIn())
@@ -118,7 +121,7 @@ public class ReservationService {
                     newAccomodationId,
                     newCheckIn,
                     newCheckOut,
-                    id // Pasamos el ID actual para excluirlo
+                    id
             );
 
             if (isOccupied) {
@@ -156,7 +159,6 @@ public class ReservationService {
             reservation.setPayment(payment);
         }
 
-        // Guardar la reserva actualizada
         return reservationRepository.save(reservation);
     }
 
@@ -191,5 +193,10 @@ public class ReservationService {
     // Find reservation by host
     public List<Reservation> findByHostId(Long hostId) {
         return reservationRepository.findByHostId(hostId);
+    }
+
+    // Obtener reseravs por alojamiento
+    public List<Reservation> findByAccomodationId(Long accomodationId) {
+        return reservationRepository.findByAccomodationId(accomodationId);
     }
 }

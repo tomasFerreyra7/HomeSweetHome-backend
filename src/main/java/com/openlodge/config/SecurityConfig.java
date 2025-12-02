@@ -52,8 +52,8 @@ public class SecurityConfig {
                         // Permitir acceso a la ruta de alojamientos por id
                         .requestMatchers(HttpMethod.GET, "/api/accomodations/**").permitAll()
 
-                        // Rutas publicas
-                        .requestMatchers("/api/accomodations", "/api/amenities").permitAll()
+                        // Esto es vital para que cargue el calendario en reservar.html sin estar logueado
+                        .requestMatchers(HttpMethod.GET, "/api/reservations/accommodation/**").permitAll()
                         
                         // Proteger las demás rutas (requieren JWT)
                         .anyRequest().authenticated()
