@@ -43,19 +43,27 @@ public class SecurityConfig {
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // **CLAVE:** Sesiones sin estado (JWT)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        // Permitir acceso a la ruta de login
+                        // 1. AUTENTICACIÓN Y REGISTRO
                         .requestMatchers("/api/auth/**").permitAll()
-                        
-                        // Permitir acceso a la ruta register
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
 
-                        // Permitir acceso a la ruta de alojamientos por id
-                        .requestMatchers(HttpMethod.GET, "/api/accomodations/**").permitAll()
+                        // 2. ALOJAMIENTOS (PÚBLICOS PARA VER)
+                        // Permitimos ambas escrituras por seguridad (con 1 'm' y con 2 'm')
+                        .requestMatchers(HttpMethod.GET, "/api/accomodations").permitAll()       // Lista (1 m)
+                        .requestMatchers(HttpMethod.GET, "/api/accomodations/**").permitAll()    // Detalle (1 m)
+                        .requestMatchers(HttpMethod.GET, "/api/accommodations").permitAll()      // Lista (2 m)
+                        .requestMatchers(HttpMethod.GET, "/api/accommodations/**").permitAll()   // Detalle (2 m)
 
-                        // Esto es vital para que cargue el calendario en reservar.html sin estar logueado
-                        .requestMatchers(HttpMethod.GET, "/api/reservations/accomodations/**").permitAll()
+                        // 3. DISPONIBILIDAD / CALENDARIO (PÚBLICO)
+                        // Vital para que el calendario cargue sin estar logueado
+                        .requestMatchers(HttpMethod.GET, "/api/reservations/accomodation/**").permitAll()  // (1 m)
+                        .requestMatchers(HttpMethod.GET, "/api/reservations/accommodation/**").permitAll() // (2 m)
+
+                        // 4. OTROS PÚBLICOS
+                        .requestMatchers(HttpMethod.GET, "/api/amenities").permitAll()
+                        .requestMatchers("/error").permitAll()
                         
-                        // Proteger las demás rutas (requieren JWT)
+                        // 5. TODO LO DEMÁS REQUIERE LOGIN
                         .anyRequest().authenticated()
                 );
         
