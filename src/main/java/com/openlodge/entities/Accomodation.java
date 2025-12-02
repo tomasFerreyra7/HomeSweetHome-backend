@@ -55,7 +55,7 @@ public class Accomodation {
         inverseJoinColumns = @JoinColumn(name = "amenity_id")
     )
     @JsonManagedReference
-    @ToString.Exclude // Evita bucles infinitos en logs
+    @ToString.Exclude 
     private List<Amenity> amenities;
 
     @OneToMany(mappedBy = "accomodation", cascade = CascadeType.ALL, orphanRemoval = true)

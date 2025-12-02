@@ -13,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
-// Importaciones necesarias para JWT (JwtAuthenticationFilter)
 
 @Configuration
 public class SecurityConfig {
@@ -37,37 +36,37 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource)) // Habilita CORS explícitamente
-                .csrf(AbstractHttpConfigurer::disable) // Desactiva CSRF (para APIs REST)
-                .sessionManagement(session -> session
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // **CLAVE:** Sesiones sin estado (JWT)
-                )
-                .authorizeHttpRequests(auth -> auth
-                        // 1. AUTENTICACIÓN Y REGISTRO
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+            .cors(cors -> cors.configurationSource(corsConfigurationSource)) 
+            .csrf(AbstractHttpConfigurer::disable) 
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) 
+            )
+            .authorizeHttpRequests(auth -> auth
+                // 1. AUTENTICACIÓN Y REGISTRO
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
 
-                        // 2. ALOJAMIENTOS (PÚBLICOS PARA VER)
-                        // Permitimos ambas escrituras por seguridad (con 1 'm' y con 2 'm')
-                        .requestMatchers(HttpMethod.GET, "/api/accomodations").permitAll()       // Lista (1 m)
-                        .requestMatchers(HttpMethod.GET, "/api/accomodations/**").permitAll()    // Detalle (1 m)
-                        .requestMatchers(HttpMethod.GET, "/api/accommodations").permitAll()      // Lista (2 m)
-                        .requestMatchers(HttpMethod.GET, "/api/accommodations/**").permitAll()   // Detalle (2 m)
+                // 2. ALOJAMIENTOS (PÚBLICOS PARA VER)
+                // Permitimos todas las variantes de escritura comunes
+                .requestMatchers(HttpMethod.GET, "/api/accomodations").permitAll()       
+                .requestMatchers(HttpMethod.GET, "/api/accomodations/**").permitAll()    
+                .requestMatchers(HttpMethod.GET, "/api/accommodations").permitAll()      
+                .requestMatchers(HttpMethod.GET, "/api/accommodations/**").permitAll()   
 
-                        // 3. DISPONIBILIDAD / CALENDARIO (PÚBLICO)
-                        // Vital para que el calendario cargue sin estar logueado
-                        .requestMatchers(HttpMethod.GET, "/api/reservations/accomodation/**").permitAll()  // (1 m)
-                        .requestMatchers(HttpMethod.GET, "/api/reservations/accommodation/**").permitAll() // (2 m)
+                // 3. DISPONIBILIDAD / CALENDARIO (PÚBLICO) - AQUÍ ESTABA EL ERROR
+                // Agregamos singular y plural para asegurar que pase la petición
+                .requestMatchers(HttpMethod.GET, "/api/reservations/accomodation/**").permitAll()  
+                .requestMatchers(HttpMethod.GET, "/api/reservations/accomodations/**").permitAll() // <--- ESTA ES LA QUE FALLABA
+                .requestMatchers(HttpMethod.GET, "/api/reservations/accommodation/**").permitAll() 
+                .requestMatchers(HttpMethod.GET, "/api/reservations/accommodations/**").permitAll() 
 
-                        // 4. OTROS PÚBLICOS
-                        .requestMatchers(HttpMethod.GET, "/api/amenities").permitAll()
-                        .requestMatchers("/error").permitAll()
-                        
-                        // 5. TODO LO DEMÁS REQUIERE LOGIN
-                        .anyRequest().authenticated()
-                );
-        
-        // **FALTA:** Añadir el filtro de JWT para validar el token en cada petición (JwtAuthenticationFilter)
+                // 4. OTROS PÚBLICOS
+                .requestMatchers(HttpMethod.GET, "/api/amenities").permitAll()
+                .requestMatchers("/error").permitAll()
+                
+                .anyRequest().authenticated()
+            );
+    
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         
         return http.build();

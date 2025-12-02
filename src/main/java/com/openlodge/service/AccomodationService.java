@@ -50,23 +50,26 @@ public class AccomodationService {
 
     @Transactional
     public Accomodation create(AccomodationDTO dto) {
+        // 1. Host
         User host = userRepository.findById(dto.getHostId())
                 .orElseThrow(() -> new RuntimeException("Host no encontrado"));
 
+        // 2. Amenities (Usando getAmenityIds)
         List<Amenity> amenities = new ArrayList<>();
         if (dto.getAmenityIds() != null && !dto.getAmenityIds().isEmpty()) {
             amenities = amenityRepository.findAllById(dto.getAmenityIds());
         }
 
-        Accomodation accomodation = Accomodation.builder()
-                .title(dto.getTitle())
-                .description(dto.getDescription())
-                .pricePerNight(dto.getPricePerNight())
-                .maxGuests(dto.getMaxGuests())
-                .host(host)
-                .amenities(amenities)
-                .build();
+        // 3. Crear Objeto
+        Accomodation accomodation = new Accomodation();
+        accomodation.setTitle(dto.getTitle());
+        accomodation.setDescription(dto.getDescription());
+        accomodation.setPricePerNight(dto.getPricePerNight());
+        accomodation.setMaxGuests(dto.getMaxGuests());
+        accomodation.setHost(host);
+        accomodation.setAmenities(amenities);
 
+        // 4. Location
         if (dto.getLocation() != null) {
             Location newLocation = new Location();
             newLocation.setCity(dto.getLocation().getCity());
@@ -75,15 +78,17 @@ public class AccomodationService {
             newLocation.setPostalCode(dto.getLocation().getPostalCode());
             newLocation.setLatitude(dto.getLocation().getLatitude());
             newLocation.setLongitude(dto.getLocation().getLongitude());
+            
             accomodation.setLocation(newLocation);
         }
 
+        // 5. Imágenes
         List<Image> imageList = new ArrayList<>();
         if (dto.getImages() != null) {
             for (ImageDTO imgDto : dto.getImages()) {
                 Image image = new Image();
                 image.setUrl(imgDto.getUrl());
-                image.setAccomodation(accomodation);
+                image.setAccomodation(accomodation); 
                 imageList.add(image);
             }
         }
@@ -97,48 +102,35 @@ public class AccomodationService {
         Accomodation existing = accomodationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Alojamiento no encontrado"));
 
-        // 1. Campos Simples
         if (dto.getTitle() != null) existing.setTitle(dto.getTitle());
         if (dto.getDescription() != null) existing.setDescription(dto.getDescription());
         if (dto.getPricePerNight() != null) existing.setPricePerNight(dto.getPricePerNight());
         if (dto.getMaxGuests() != null) existing.setMaxGuests(dto.getMaxGuests());
 
-        // 2. Actualizar HOST (NUEVO: Esto es lo que faltaba)
-        if (dto.getHostId() != null) {
-            // Solo buscamos en BD si el ID es diferente al actual
-            if (!existing.getHost().getId().equals(dto.getHostId())) {
-                User newHost = userRepository.findById(dto.getHostId())
-                        .orElseThrow(() -> new RuntimeException("Nuevo Host no encontrado"));
-                existing.setHost(newHost);
-            }
-        }
-
-        // 3. Actualizar Location
+        // Update Location
         if (dto.getLocation() != null) {
             Location loc = existing.getLocation();
             if (loc == null) {
                 loc = new Location();
                 existing.setLocation(loc);
             }
-            if (dto.getLocation().getCity() != null) loc.setCity(dto.getLocation().getCity());
-            if (dto.getLocation().getCountry() != null) loc.setCountry(dto.getLocation().getCountry());
-            if (dto.getLocation().getAddress() != null) loc.setAddress(dto.getLocation().getAddress());
-            if (dto.getLocation().getPostalCode() != null) loc.setPostalCode(dto.getLocation().getPostalCode());
+            if(dto.getLocation().getCity() != null) loc.setCity(dto.getLocation().getCity());
+            if(dto.getLocation().getCountry() != null) loc.setCountry(dto.getLocation().getCountry());
+            if(dto.getLocation().getAddress() != null) loc.setAddress(dto.getLocation().getAddress());
+            if(dto.getLocation().getPostalCode() != null) loc.setPostalCode(dto.getLocation().getPostalCode());
         }
 
-        // 4. Actualizar Amenities
+        // Update Amenities (CORREGIDO AQUÍ)
+        // Usamos getAmenityIds() porque eso es lo que tiene tu DTO
         if (dto.getAmenityIds() != null) {
-            List<Amenity> amenities = amenityRepository.findAllById(dto.getAmenityIds());
-            existing.setAmenities(amenities);
+             List<Amenity> newAmenities = amenityRepository.findAllById(dto.getAmenityIds());
+             existing.setAmenities(newAmenities);
         }
 
-        // 5. Actualizar Imágenes
+        // Update Images (Reemplazo total)
         if (dto.getImages() != null) {
-            if (existing.getImages() != null) {
-                existing.getImages().clear();
-            } else {
-                existing.setImages(new ArrayList<>());
-            }
+            if (existing.getImages() != null) existing.getImages().clear();
+            else existing.setImages(new ArrayList<>());
 
             for (ImageDTO imgDto : dto.getImages()) {
                 Image img = new Image();
@@ -153,15 +145,19 @@ public class AccomodationService {
 
     @Transactional
     public void delete(Long id) {
+        // 1. Verificar existencia
         Accomodation accomodation = accomodationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Alojamiento no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Alojamiento no encontrado con ID: " + id));
 
-        // Borrar reservas asociadas primero para evitar error de FK
+        // 2. Borrar RESERVAS asociadas primero
+        // Esto evita el error de "Foreign Key Constraint"
         List<Reservation> reservasAsociadas = reservationRepository.findByAccomodationId(id);
-        if (!reservasAsociadas.isEmpty()) {
+        
+        if (reservasAsociadas != null && !reservasAsociadas.isEmpty()) {
             reservationRepository.deleteAll(reservasAsociadas);
         }
 
+        // 3. Borrar el Alojamiento (Cascade borra imágenes, location y reviews)
         accomodationRepository.delete(accomodation);
     }
 }
