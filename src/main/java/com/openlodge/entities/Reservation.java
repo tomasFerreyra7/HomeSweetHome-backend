@@ -1,11 +1,8 @@
 package com.openlodge.entities;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.openlodge.util.ValidDateRange;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.*;
-
 import java.time.LocalDate;
 
 @Entity
@@ -14,38 +11,41 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ValidDateRange
 public class Reservation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "La fecha de check-in no puede ser nula")
-    @FutureOrPresent(message = "La fecha de check-in debe ser hoy o una fecha futura")
+    @Column(name = "check_in", nullable = false)
     private LocalDate checkIn;
 
-    @NotNull(message = "La fecha de check-out no puede ser nula")
-    @FutureOrPresent(message = "La fecha de check-out debe ser hoy o una fecha futura")
+    @Column(name = "check_out", nullable = false)
     private LocalDate checkOut;
 
-    @NotNull(message = "El precio total no puede ser nulo")
-    @Positive(message = "El precio total debe ser un valor positivo")
+    @Column(nullable = false)
     private Double totalPrice;
 
-    @ManyToOne
+    // --- RELACIÓN CON EL HUÉSPED ---
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "guest_id")
+    // Ignoramos "reservations" dentro del usuario para no hacer bucle
+    // Ignoramos el "handler" de hibernate para evitar error 500 por Lazy Loading
+    @JsonIgnoreProperties({"reservations", "password", "hibernateLazyInitializer", "handler"}) 
     private User guest;
 
-    @ManyToOne
+    // --- RELACIÓN CON EL ALOJAMIENTO ---
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accomodation_id")
+    // Importante: Ignoramos la lista de reservas dentro del alojamiento para no volver aquí
+    @JsonIgnoreProperties({"reservations", "reviews", "hibernateLazyInitializer", "handler"})
     private Accomodation accomodation;
 
+    // --- RELACIÓN CON PAGO ---
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "payment_id")
-    @JsonManagedReference
+    @JoinColumn(name = "payment_id", referencedColumnName = "id")
     private Payment payment;
 
     @Column(name = "deleted_at")
     private LocalDate deletedAt;
-}   
+}
